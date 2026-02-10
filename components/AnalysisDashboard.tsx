@@ -1,15 +1,57 @@
 'use client';
 
-import { TwitterAccount, XAlgorithmEngine } from '@/lib/x-algorithm';
+import { useState, useEffect } from 'react';
+import { TwitterAccount } from '@/lib/x-algorithm';
+import { ApiClient, AnalysisResult } from '@/lib/api-client';
 
 interface AnalysisDashboardProps {
   account: TwitterAccount;
 }
 
 export default function AnalysisDashboard({ account }: AnalysisDashboardProps) {
-  const engagementScore = XAlgorithmEngine.calculateEngagementScore(account);
-  const { strengths, opportunities } = XAlgorithmEngine.identifyWorkingStrategies(account);
-  const growthPlan = XAlgorithmEngine.generateGrowthPlan(account);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await ApiClient.analyzeAccount(account);
+        setAnalysis(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to analyze account');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [account]);
+
+  if (loading) {
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto p-6">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Analyzing your account...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !analysis) {
+    return (
+      <div className="space-y-6 max-w-6xl mx-auto p-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
+          <p className="text-red-800 dark:text-red-200">{error || 'Failed to load analysis'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { engagementScore, strengths, opportunities, growthPlan } = analysis;
 
   const scoreColor = engagementScore >= 70 ? 'text-green-500' : 
                      engagementScore >= 40 ? 'text-yellow-500' : 'text-red-500';
