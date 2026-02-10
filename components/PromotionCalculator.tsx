@@ -62,12 +62,12 @@ export default function PromotionCalculator({ account }: PromotionCalculatorProp
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 text-white rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-2">Return on Investment (ROI)</h3>
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-6">
+          <h3 className="text-lg font-semibold mb-2 text-white">Return on Investment (ROI)</h3>
           <div className={`text-4xl font-bold ${roiColor}`}>
             {simulation.roi > 0 ? '+' : ''}{simulation.roi.toFixed(1)}%
           </div>
-          <p className="text-sm mt-2 opacity-90">
+          <p className="text-sm mt-2 opacity-90 text-white">
             {simulation.roi > 0 
               ? 'Positive ROI - Your promotion is projected to be profitable' 
               : 'Negative ROI - Consider improving content quality before promoting'}

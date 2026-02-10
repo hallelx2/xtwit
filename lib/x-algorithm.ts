@@ -110,9 +110,12 @@ export class XAlgorithmEngine {
   // Simulate post performance
   static simulatePostPerformance(
     account: TwitterAccount,
-    postQuality: number, // 1-10 scale
+    postQuality: number, // 1-10 scale (caller should ensure value is in range)
     postTiming: 'optimal' | 'good' | 'average' | 'poor'
   ): PostMetrics {
+    // Clamp postQuality to 1-10 range to ensure valid calculations
+    const quality = Math.max(1, Math.min(10, postQuality));
+    
     const timingMultiplier = {
       optimal: 1.5,
       good: 1.2,
@@ -121,9 +124,9 @@ export class XAlgorithmEngine {
     }[postTiming];
 
     const baseImpressions = account.followers * 0.15 * timingMultiplier;
-    const impressions = Math.round(baseImpressions * (postQuality / 10));
+    const impressions = Math.round(baseImpressions * (quality / 10));
     
-    const engagementRate = 0.02 * (postQuality / 10) * timingMultiplier;
+    const engagementRate = 0.02 * (quality / 10) * timingMultiplier;
     const likes = Math.round(impressions * engagementRate);
     const retweets = Math.round(likes * 0.15);
     const replies = Math.round(likes * 0.08);
