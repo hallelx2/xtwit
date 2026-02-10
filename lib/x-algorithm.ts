@@ -110,7 +110,7 @@ export class XAlgorithmEngine {
   // Simulate post performance
   static simulatePostPerformance(
     account: TwitterAccount,
-    postQuality: number, // 1-10 scale (caller should ensure value is in range)
+    postQuality: number, // 1-10 scale (automatically clamped if out of range)
     postTiming: 'optimal' | 'good' | 'average' | 'poor'
   ): PostMetrics {
     // Clamp postQuality to 1-10 range to ensure valid calculations

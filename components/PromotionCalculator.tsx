@@ -12,8 +12,12 @@ export default function PromotionCalculator({ account }: PromotionCalculatorProp
   
   const simulation = XAlgorithmEngine.simulatePromotion(account, budget);
   
-  const roiColor = simulation.roi >= 50 ? 'text-green-500' : 
-                   simulation.roi >= 0 ? 'text-yellow-500' : 'text-red-500';
+  // Determine background gradient based on ROI
+  const roiBgGradient = simulation.roi >= 50 
+    ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
+    : simulation.roi >= 0 
+    ? 'bg-gradient-to-br from-yellow-500 to-orange-500' 
+    : 'bg-gradient-to-br from-red-500 to-rose-600';
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6">
@@ -62,12 +66,12 @@ export default function PromotionCalculator({ account }: PromotionCalculatorProp
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg p-6">
-          <h3 className="text-lg font-semibold mb-2 text-white">Return on Investment (ROI)</h3>
-          <div className={`text-4xl font-bold ${roiColor}`}>
+        <div className={`${roiBgGradient} rounded-lg p-6 text-white`}>
+          <h3 className="text-lg font-semibold mb-2">Return on Investment (ROI)</h3>
+          <div className="text-4xl font-bold">
             {simulation.roi > 0 ? '+' : ''}{simulation.roi.toFixed(1)}%
           </div>
-          <p className="text-sm mt-2 opacity-90 text-white">
+          <p className="text-sm mt-2 opacity-90">
             {simulation.roi > 0 
               ? 'Positive ROI - Your promotion is projected to be profitable' 
               : 'Negative ROI - Consider improving content quality before promoting'}
