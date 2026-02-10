@@ -8,10 +8,10 @@ const app = new Hono().basePath('/api');
 // Analyze Twitter account endpoint
 app.post('/analyze', async (c) => {
   try {
-    const account: TwitterAccount = await c.req.json();
+    const body = await c.req.json();
+    const account = XAlgorithmEngine.validateTwitterAccount(body);
     
-    // Validate required fields
-    if (!account.username || account.followers === undefined) {
+    if (!account) {
       return c.json({ error: 'Invalid account data' }, 400);
     }
 
@@ -35,10 +35,12 @@ app.post('/analyze', async (c) => {
 // Generate growth forecast endpoint
 app.post('/forecast', async (c) => {
   try {
-    const { account, months } = await c.req.json();
+    const body = await c.req.json();
+    const account = XAlgorithmEngine.validateTwitterAccount(body.account);
+    const months = body.months;
     
-    if (!account || !months) {
-      return c.json({ error: 'Account data and months are required' }, 400);
+    if (!account || typeof months !== 'number' || months <= 0) {
+      return c.json({ error: 'Valid account data and positive months are required' }, 400);
     }
 
     const forecasts = XAlgorithmEngine.projectFollowerGrowth(account, months);
@@ -53,10 +55,19 @@ app.post('/forecast', async (c) => {
 // Simulate post performance endpoint
 app.post('/simulate-post', async (c) => {
   try {
-    const { account, postQuality, postTiming } = await c.req.json();
+    const body = await c.req.json();
+    const account = XAlgorithmEngine.validateTwitterAccount(body.account);
+    const postQuality = body.postQuality;
+    const postTiming = body.postTiming;
     
-    if (!account || postQuality === undefined || !postTiming) {
-      return c.json({ error: 'Account, postQuality, and postTiming are required' }, 400);
+    const validTimings = ['optimal', 'good', 'average', 'poor'];
+
+    if (
+      !account ||
+      typeof postQuality !== 'number' ||
+      !validTimings.includes(postTiming)
+    ) {
+      return c.json({ error: 'Valid account, postQuality (number), and postTiming are required' }, 400);
     }
 
     const metrics = XAlgorithmEngine.simulatePostPerformance(account, postQuality, postTiming);
@@ -71,10 +82,12 @@ app.post('/simulate-post', async (c) => {
 // Simulate promotion ROI endpoint
 app.post('/simulate-promotion', async (c) => {
   try {
-    const { account, budget } = await c.req.json();
+    const body = await c.req.json();
+    const account = XAlgorithmEngine.validateTwitterAccount(body.account);
+    const budget = body.budget;
     
-    if (!account || budget === undefined) {
-      return c.json({ error: 'Account and budget are required' }, 400);
+    if (!account || typeof budget !== 'number' || budget < 0) {
+      return c.json({ error: 'Valid account and non-negative budget are required' }, 400);
     }
 
     const simulation = XAlgorithmEngine.simulatePromotion(account, budget);
