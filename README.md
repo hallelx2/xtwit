@@ -49,11 +49,30 @@ npm run dev
 
 ## Technology Stack
 
-- **Framework**: Next.js 14 with App Router
+- **Framework**: Next.js 16 with App Router
+- **Backend**: Hono (lightweight web framework)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **Charts**: Recharts
 - **Icons**: Lucide React
+
+## Architecture
+
+### Backend API (Hono)
+
+The application uses Hono as the backend framework, providing RESTful API endpoints:
+
+- `GET /api/health` - Health check endpoint
+- `POST /api/analyze` - Analyze Twitter account and generate insights
+- `POST /api/forecast` - Generate growth forecasts
+- `POST /api/simulate-post` - Simulate post performance
+- `POST /api/simulate-promotion` - Calculate promotion ROI
+
+All X algorithm calculations run server-side for better performance and security.
+
+### Frontend
+
+React components fetch data from the Hono API endpoints using a type-safe API client (`lib/api-client.ts`). Each component includes loading states and error handling for a smooth user experience.
 
 ## Algorithm Basis
 
