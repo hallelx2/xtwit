@@ -47,6 +47,52 @@ export const ALGORITHM_WEIGHTS = {
 };
 
 export class XAlgorithmEngine {
+  // Validate Twitter account object
+  static validateTwitterAccount(data: any): TwitterAccount | null {
+    if (!data || typeof data !== 'object') return null;
+
+    const {
+      username,
+      followers,
+      following,
+      totalTweets,
+      avgLikes,
+      avgRetweets,
+      avgReplies,
+      avgImpressions,
+      verifiedBadge,
+      accountAge,
+    } = data;
+
+    if (
+      typeof username !== 'string' || username.trim() === '' ||
+      typeof followers !== 'number' || followers < 0 ||
+      typeof following !== 'number' || following < 0 ||
+      typeof totalTweets !== 'number' || totalTweets < 0 ||
+      typeof avgLikes !== 'number' || avgLikes < 0 ||
+      typeof avgRetweets !== 'number' || avgRetweets < 0 ||
+      typeof avgReplies !== 'number' || avgReplies < 0 ||
+      typeof avgImpressions !== 'number' || avgImpressions < 0 ||
+      typeof verifiedBadge !== 'boolean' ||
+      typeof accountAge !== 'number' || accountAge <= 0
+    ) {
+      return null;
+    }
+
+    return {
+      username,
+      followers,
+      following,
+      totalTweets,
+      avgLikes,
+      avgRetweets,
+      avgReplies,
+      avgImpressions,
+      verifiedBadge,
+      accountAge,
+    };
+  }
+
   // Calculate engagement score based on X algorithm
   static calculateEngagementScore(account: TwitterAccount): number {
     const engagementRate = 
